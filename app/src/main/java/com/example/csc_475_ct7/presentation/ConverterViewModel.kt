@@ -1,14 +1,20 @@
 package com.example.csc_475_ct7.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.csc_475_ct7.data.local.entity.ConversionHistoryEntity
+import com.example.csc_475_ct7.data.repository.HistoryRepository
 import com.example.csc_475_ct7.domain.model.ConversionCategory
 import com.example.csc_475_ct7.domain.model.UnitType
 import com.example.csc_475_ct7.domain.usecase.ConvertUnitsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -23,11 +29,15 @@ data class ConverterUiState(
 
 @HiltViewModel
 class ConverterViewModel @Inject constructor(
-    private val convertUnitsUseCase: ConvertUnitsUseCase
+    private val convertUnitsUseCase: ConvertUnitsUseCase,
+    private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConverterUiState())
     val uiState: StateFlow<ConverterUiState> = _uiState.asStateFlow()
+
+    val history: StateFlow<List<ConversionHistoryEntity>> = historyRepository.getAllHistory()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         updateAvailableUnits(ConversionCategory.TEMPERATURE)
@@ -39,7 +49,6 @@ class ConverterViewModel @Inject constructor(
             return
         }
         
-        // Basic validation for numbers
         if (input.toDoubleOrNull() == null && input != "-" && input != ".") return
 
         _uiState.update { it.copy(inputValue = input) }
@@ -73,6 +82,29 @@ class ConverterViewModel @Inject constructor(
         performConversion()
     }
 
+    fun saveToHistory() {
+        val state = _uiState.value
+        if (state.outputValue.isEmpty() || state.outputValue == "Error") return
+
+        viewModelScope.launch {
+            historyRepository.insertHistory(
+                ConversionHistoryEntity(
+                    inputValue = state.inputValue,
+                    inputUnit = state.fromUnit.abbreviation,
+                    outputValue = state.outputValue,
+                    outputUnit = state.toUnit.abbreviation,
+                    category = state.category.name
+                )
+            )
+        }
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            historyRepository.clearHistory()
+        }
+    }
+
     private fun updateAvailableUnits(category: ConversionCategory) {
         val units = when (category) {
             ConversionCategory.TEMPERATURE -> listOf(
@@ -96,6 +128,27 @@ class ConverterViewModel @Inject constructor(
                 UnitType.Weight.Milligram,
                 UnitType.Weight.Ounce,
                 UnitType.Weight.Pound
+            )
+            ConversionCategory.VOLUME -> listOf(
+                UnitType.Volume.Liter,
+                UnitType.Volume.Milliliter,
+                UnitType.Volume.Gallon,
+                UnitType.Volume.Quart,
+                UnitType.Volume.Pint,
+                UnitType.Volume.Cup
+            )
+            ConversionCategory.SPEED -> listOf(
+                UnitType.Speed.KmH,
+                UnitType.Speed.Mph,
+                UnitType.Speed.MS,
+                UnitType.Speed.Knot
+            )
+            ConversionCategory.TIME -> listOf(
+                UnitType.Time.Second,
+                UnitType.Time.Minute,
+                UnitType.Time.Hour,
+                UnitType.Time.Day,
+                UnitType.Time.Week
             )
         }
         

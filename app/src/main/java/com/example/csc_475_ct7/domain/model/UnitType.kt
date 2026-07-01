@@ -28,4 +28,28 @@ sealed interface UnitType {
         object Ounce : Weight { override val name = "Ounce"; override val abbreviation = "oz" }
         object Pound : Weight { override val name = "Pound"; override val abbreviation = "lb" }
     }
+
+    sealed interface Volume : UnitType {
+        object Liter : Volume { override val name = "Liter"; override val abbreviation = "L" }
+        object Milliliter : Volume { override val name = "Milliliter"; override val abbreviation = "mL" }
+        object Gallon : Volume { override val name = "Gallon"; override val abbreviation = "gal" }
+        object Quart : Volume { override val name = "Quart"; override val abbreviation = "qt" }
+        object Pint : Volume { override val name = "Pint"; override val abbreviation = "pt" }
+        object Cup : Volume { override val name = "Cup"; override val abbreviation = "cup" }
+    }
+
+    sealed interface Speed : UnitType {
+        object KmH : Speed { override val name = "Km/h"; override val abbreviation = "km/h" }
+        object Mph : Speed { override val name = "Mph"; override val abbreviation = "mph" }
+        object MS : Speed { override val name = "M/s"; override val abbreviation = "m/s" }
+        object Knot : Speed { override val name = "Knot"; override val abbreviation = "kn" }
+    }
+
+    sealed interface Time : UnitType {
+        object Second : Time { override val name = "Second"; override val abbreviation = "s" }
+        object Minute : Time { override val name = "Minute"; override val abbreviation = "min" }
+        object Hour : Time { override val name = "Hour"; override val abbreviation = "h" }
+        object Day : Time { override val name = "Day"; override val abbreviation = "d" }
+        object Week : Time { override val name = "Week"; override val abbreviation = "wk" }
+    }
 }
