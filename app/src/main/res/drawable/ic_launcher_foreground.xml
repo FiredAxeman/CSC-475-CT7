@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Thermometer / Vertical Pillar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,30h4v42h-4z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,72m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0" />
+
+    <!-- Ruler / Horizontal Beam -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,42h48v4h-48z" />
+
+    <!-- Ruler Ticks -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M35,42v-4M45,42v-4M55,42v-4M65,42v-4M75,42v-4" />
+
+    <!-- Weight / Scale Pans -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,52l8,0l-4,8z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M74,52l8,0l-4,8z" />
+
+    <!-- Connectors -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:pathData="M30,46v6M78,46v6" />
+
+    <!-- Tonal variation for depth (optional but nice for Material 3) -->
+    <path
+        android:fillColor="#20FFFFFF"
+        android:pathData="M54,44l24,0l0,2l-24,0z" />
+
+</vector>
